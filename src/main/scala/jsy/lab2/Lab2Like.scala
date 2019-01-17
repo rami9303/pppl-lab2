@@ -2,6 +2,7 @@ package jsy.lab2
 
 import jsy.lab2.ast.Expr
 import jsy.lab2.ast.isValue
+import jsy.lab2.ast.closed
 import jsy.lab2.Parser.parse
 
 trait Lab2Like {
@@ -20,8 +21,12 @@ trait Lab2Like {
   def eval(env: Env, e: Expr): Expr
 
   /** Interface to run your interpreter starting from an empty environment. */
-  def eval(e: Expr): Expr = eval(empty, e)
+  def eval(e: Expr): Expr = {
+    require(closed(e))
+    eval(empty, e)
+  }
 
   /** Interface to run your interpreter from a string.  This is convenient for unit testing. */
   def eval(s: String): Expr = eval(parse(s))
+
 }

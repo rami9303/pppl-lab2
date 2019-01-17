@@ -82,4 +82,18 @@ object ast {
 
   def prettyNumber(n: Double): String =
     if (n.isWhole) "%.0f" format n else n.toString
+
+  /* Get the free variables of e. */
+  def freeVars(e: Expr): Set[String] = e match {
+    case Var(x) => Set(x)
+    case ConstDecl(x, e1, e2) => freeVars(e1) | (freeVars(e2) - x)
+    case N(_) | B(_) | Undefined | S(_) => Set.empty
+    case Unary(_, e1) => freeVars(e1)
+    case Binary(_, e1, e2) => freeVars(e1) | freeVars(e2)
+    case If (e1, e2, e3) => freeVars(e1) | freeVars(e2) | freeVars(e3)
+    case Print(e1) => freeVars(e1)
+  }
+
+  /* Check closed expressions. */
+  def closed(e: Expr): Boolean = freeVars(e).isEmpty
 }
